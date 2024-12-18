@@ -189,30 +189,33 @@ const handleMenuSelect = (index: number) => {
 /* 主体内容 */
 .el-main {
     padding: 0;
-    /* 去掉上下左右的内边距，确保背景不被遮挡 */
     background: url('../../assets/images/default.jpg') no-repeat center center;
     background-size: cover;
-    /* 确保图片覆盖整个容器 */
     position: relative;
-    overflow: hidden;
-    /* 防止任何溢出区域 */
+    overflow: auto;
     padding-top: 10%;
     height: auto;
-    /* 修改为 auto，确保根据内容自适应高度 */
+    /* 确保内容自适应 */
 }
 
 /* 背景的遮罩层 */
 .el-main::before {
     content: '';
-    position: absolute;
+    position: fixed;
+    /* 让遮罩层固定在视口上 */
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.3);
-    /* 遮罩层 */
+    /* 遮罩层颜色和透明度 */
     z-index: 1;
+    /* 确保遮罩层位于所有内容之下 */
+    pointer-events: none;
+    /* 确保遮罩层不会影响到页面内容的点击事件 */
 }
+
+
 
 .blog-content {
     max-width: 900px;
@@ -232,9 +235,11 @@ const handleMenuSelect = (index: number) => {
 /* 帖子列表 */
 .post-list {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr;
+    /* 每行显示一个帖子 */
     gap: 20px;
 }
+
 
 .post-card {
     border-radius: 10px;
