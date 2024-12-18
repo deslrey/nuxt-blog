@@ -1,4 +1,4 @@
-<template >
+<template>
     <div>
         <h1>我是About页面</h1>
     </div>
@@ -7,6 +7,4 @@
 
 </script>
 
-<style lang="css" scoped>
-    
-</style>
+<style lang="css" scoped></style>
