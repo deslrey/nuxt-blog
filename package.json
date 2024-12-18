@@ -16,6 +16,9 @@
     "vue-router": "^4.4.0"
   },
   "devDependencies": {
-    "@element-plus/nuxt": "^1.1.0"
+    "@element-plus/nuxt": "^1.1.0",
+    "@nuxt/types": "^2.18.1",
+    "@nuxt/typescript-build": "^3.0.2",
+    "typescript": "^5.7.2"
   }
 }
