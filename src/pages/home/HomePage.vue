@@ -80,6 +80,18 @@ const posts = ref<Post[]>([
     { id: 1, title: '我的第一篇博客', excerpt: '这是一篇关于我如何开始编写博客的文章...', date: '2024-01-01' },
     { id: 2, title: 'Nuxt.js 入门教程', excerpt: 'Nuxt.js 是一个非常强大的框架，本文将带你了解它的基础知识...', date: '2024-02-01' },
     { id: 3, title: '如何优化前端性能', excerpt: '性能优化是前端开发中的重要环节，本文将分享一些常见的优化技巧...', date: '2024-03-01' },
+    { id: 4, title: '我的第一篇博客', excerpt: '这是一篇关于我如何开始编写博客的文章...', date: '2024-01-01' },
+    { id: 5, title: 'Nuxt.js 入门教程', excerpt: 'Nuxt.js 是一个非常强大的框架，本文将带你了解它的基础知识...', date: '2024-02-01' },
+    { id: 6, title: '如何优化前端性能', excerpt: '性能优化是前端开发中的重要环节，本文将分享一些常见的优化技巧...', date: '2024-03-01' },
+    { id: 7, title: '我的第一篇博客', excerpt: '这是一篇关于我如何开始编写博客的文章...', date: '2024-01-01' },
+    { id: 8, title: 'Nuxt.js 入门教程', excerpt: 'Nuxt.js 是一个非常强大的框架，本文将带你了解它的基础知识...', date: '2024-02-01' },
+    { id: 9, title: '如何优化前端性能', excerpt: '性能优化是前端开发中的重要环节，本文将分享一些常见的优化技巧...', date: '2024-03-01' },
+    { id: 10, title: '我的第一篇博客', excerpt: '这是一篇关于我如何开始编写博客的文章...', date: '2024-01-01' },
+    { id: 11, title: 'Nuxt.js 入门教程', excerpt: 'Nuxt.js 是一个非常强大的框架，本文将带你了解它的基础知识...', date: '2024-02-01' },
+    { id: 12, title: '如何优化前端性能', excerpt: '性能优化是前端开发中的重要环节，本文将分享一些常见的优化技巧...', date: '2024-03-01' },
+    { id: 13, title: '我的第一篇博客', excerpt: '这是一篇关于我如何开始编写博客的文章...', date: '2024-01-01' },
+    { id: 14, title: 'Nuxt.js 入门教程', excerpt: 'Nuxt.js 是一个非常强大的框架，本文将带你了解它的基础知识...', date: '2024-02-01' },
+    { id: 15, title: '如何优化前端性能', excerpt: '性能优化是前端开发中的重要环节，本文将分享一些常见的优化技巧...', date: '2024-03-01' },
 ]);
 
 // 跳转到文章详情
@@ -97,6 +109,13 @@ const handleMenuSelect = (index: number) => {
 </script>
 
 <style scoped>
+/* 避免出现页面的滚动条 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 /* 头部样式 */
 .el-header {
     background-color: transparent;
@@ -149,7 +168,6 @@ const handleMenuSelect = (index: number) => {
 .menu li:hover {
     background-color: transparent;
     color: rgb(45, 168, 217);
-    /* 悬停时显示绿色字体 */
 }
 
 /* active 样式：选中时的样式 */
@@ -162,7 +180,6 @@ const handleMenuSelect = (index: number) => {
 /* 鼠标悬停时不会覆盖选中的字体颜色 */
 .menu li.active:hover {
     color: rgb(45, 168, 217);
-    /* 选中后鼠标悬停时显示绿色 */
 }
 
 .menu li el-icon {
@@ -171,14 +188,20 @@ const handleMenuSelect = (index: number) => {
 
 /* 主体内容 */
 .el-main {
-    padding: 20px;
+    padding: 0;
+    /* 去掉上下左右的内边距，确保背景不被遮挡 */
     background: url('../../assets/images/default.jpg') no-repeat center center;
     background-size: cover;
-    min-height: 100vh;
+    /* 确保图片覆盖整个容器 */
     position: relative;
+    overflow: hidden;
+    /* 防止任何溢出区域 */
     padding-top: 10%;
+    height: auto;
+    /* 修改为 auto，确保根据内容自适应高度 */
 }
 
+/* 背景的遮罩层 */
 .el-main::before {
     content: '';
     position: absolute;
@@ -187,6 +210,7 @@ const handleMenuSelect = (index: number) => {
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.3);
+    /* 遮罩层 */
     z-index: 1;
 }
 
@@ -198,6 +222,14 @@ const handleMenuSelect = (index: number) => {
     z-index: 2;
 }
 
+/* 主体部分滚动支持 */
+.el-main {
+    overflow-y: auto;
+    /* 增加垂直滚动支持 */
+}
+
+
+/* 帖子列表 */
 .post-list {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -215,6 +247,7 @@ const handleMenuSelect = (index: number) => {
     color: #aaa;
 }
 
+/* 页脚内容 */
 .footer-content {
     text-align: center;
     padding: 10px 0;
