@@ -5,6 +5,7 @@ export default defineNuxtConfig({
   modules: ['@element-plus/nuxt'],
   css: [
     'element-plus/dist/index.css',
-    'element-plus/theme-chalk/display.css'
+    'element-plus/theme-chalk/display.css',
+    '~/assets/css/global.css'
   ],
 })
