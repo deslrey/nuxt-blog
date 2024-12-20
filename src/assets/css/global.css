@@ -1,11 +1,13 @@
-/* src/assets/global.css */
 body {
     margin: 0;
     padding: 0;
     background-image: url('../images/bj.jpg');
+    /* background-color: aqua; */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    background-attachment: fixed;
+    /* 使背景图片固定 */
     min-height: 100vh;
     position: relative;
     /* 需要定位父元素 */
