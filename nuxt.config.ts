@@ -7,5 +7,5 @@ export default defineNuxtConfig({
     'element-plus/dist/index.css',
     'element-plus/theme-chalk/display.css',
     '~/assets/css/global.css'
-  ],
-})
+  ]
+});

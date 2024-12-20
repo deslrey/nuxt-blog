@@ -2,8 +2,8 @@
     <div class="article-container">
         <!-- 文章列表 -->
         <div v-for="(article, index) in paginatedArticles" :key="index" class="article-box">
-            <NuxtLink :to="`/article/${encodeURIComponent(article.title)}`" class="article-box"
-                @click.prevent="navigateToArticle(article)">
+            <!-- 使用查询参数 id 和 title -->
+            <NuxtLink :to="`/article?title=${article.title}&id=${article.id}`" class="article-box">
                 <!-- 左侧图片 -->
                 <div class="article-image">
                     <img :src="article.imageUrl" alt="Article Image" />
@@ -28,9 +28,9 @@
 
 <script lang="ts" setup>
 import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
 
 interface Article {
+    id: string;
     title: string;
     description: string;
     imageUrl: string;
@@ -41,13 +41,13 @@ interface Article {
 }
 
 const articles = ref<Article[]>([
-    { title: '文章 1', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-01' },
-    { title: '文章 2', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-02' },
-    { title: '文章 3', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-03' },
-    { title: '文章 4', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-04' },
-    { title: '文章 5', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-05' },
-    { title: '文章 6', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-06' },
-    { title: '文章 7', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-07' },
+    { id: '1', title: '文章1', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-01' },
+    { id: '2', title: '文章2', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-02' },
+    { id: '3', title: '文章3', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-03' },
+    { id: '4', title: '文章4', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-04' },
+    { id: '5', title: '文章5', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-05' },
+    { id: '6', title: '文章6', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-06' },
+    { id: '7', title: '文章7', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-07' },
 ]);
 
 const itemsPerPage = 5; // 每页显示 5 篇文章
@@ -74,22 +74,6 @@ const paginatedArticles = computed(() => {
     const end = start + itemsPerPage;
     return articles.value.slice(start, end);
 });
-
-// 路由实例
-const router = useRouter();
-
-// 跳转到文章详情
-const navigateToArticle = (article: Article) => {
-    router.push({
-        name: 'article',
-        params: { title: article.title },
-    });
-};
-
-// 处理页码变化
-const handlePageChange = (page: number) => {
-    currentPage.value = page;
-};
 </script>
 
 <style scoped>
@@ -167,26 +151,5 @@ const handlePageChange = (page: number) => {
 
 .article-category {
     margin-left: 8px;
-}
-
-/* 分页容器样式 */
-.pagination-wrapper {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    /* 确保分页居中 */
-    margin-top: 20px;
-    /* 上方间距 */
-}
-
-.el-pagination {
-    display: flex;
-    justify-content: center;
-    max-width: 100%;
-    /* 防止宽度超出 */
-    width: auto;
-    /* 根据内容自适应宽度 */
-    padding: 0 20px;
-    /* 给分页组件两侧加一些间距，避免紧贴边缘 */
 }
 </style>
