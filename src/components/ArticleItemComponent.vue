@@ -1,24 +1,30 @@
 <template>
     <div class="article-container">
-        <NuxtLink :to="`/article/${encodeURIComponent(title)}`" class="article-box" @click.prevent="navigateToArticle">
-            <!-- 左侧图片 -->
-            <div class="article-image">
-                <img :src="imageUrl" alt="Article Image" />
-            </div>
+        <!-- 文章列表 -->
+        <div v-for="(article, index) in paginatedArticles" :key="index" class="article-box">
+            <NuxtLink :to="`/article/${encodeURIComponent(article.title)}`" class="article-box"
+                @click.prevent="navigateToArticle(article)">
+                <!-- 左侧图片 -->
+                <div class="article-image">
+                    <img :src="article.imageUrl" alt="Article Image" />
+                </div>
 
-            <!-- 右侧内容 -->
-            <div class="article-content">
-                <h2 class="article-title">{{ title }}</h2>
-                <p class="article-description">{{ description }}</p>
-                <div class="article-meta">
-                    <span class="article-date">{{ formattedDate }}</span>
-                    <span class="article-category">{{ category }}</span>
+                <!-- 右侧内容 -->
+                <div class="article-content">
+                    <h2 class="article-title">{{ article.title }}</h2>
+                    <p class="article-description">{{ article.description }}</p>
+                    <div class="article-meta">
+                        <span class="article-date">{{ article.formattedDate }}</span>
+                        <span class="article-category">{{ article.category }}</span>
+                    </div>
+                    <div class="article-tags">
+                        <span v-for="(tag, index) in article.tags" :key="index" class="article-tag">{{ tag }}</span>
+                    </div>
                 </div>
-                <div class="article-tags">
-                    <span v-for="(tag, index) in tags" :key="index" class="article-tag">{{ tag }}</span>
-                </div>
-            </div>
-        </NuxtLink>
+            </NuxtLink>
+        </div>
+
+
     </div>
 </template>
 
@@ -26,29 +32,41 @@
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 
-const articleId = ref(1);  // 文章 ID
-const title = ref('文章标题');
-const description = ref('这是一篇文章的简短描述');
-const imageUrl = ref('https://via.placeholder.com/150');
-const tags = ref(['技术', '编程']);
-const category = ref('前端开发');
-const date = ref('2024-12-20');
+const articles = ref([
+    { title: '文章 1', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-01' },
+    { title: '文章 2', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-02' },
+    { title: '文章 3', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-03' },
+    { title: '文章 4', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-04' },
+    { title: '文章 5', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-05' },
+    { title: '文章 6', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-06' },
+    { title: '文章 7', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-07' },
+    // 假设更多文章
+]);
 
-// 格式化日期
-const formattedDate = computed(() => {
-    const dateObj = new Date(date.value);
-    return `${dateObj.getFullYear()}-${(dateObj.getMonth() + 1).toString().padStart(2, '0')}-${dateObj.getDate().toString().padStart(2, '0')}`;
+const itemsPerPage = 5;  // 每页显示 5 篇文章
+const currentPage = ref(1);  // 当前页码
+
+// 分页后的文章列表
+const paginatedArticles = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    return articles.value.slice(start, end);
 });
 
-// 获取路由实例
+// 路由实例
 const router = useRouter();
 
-const navigateToArticle = () => {
+// 跳转到文章详情
+const navigateToArticle = (article) => {
     router.push({
         name: 'article',
-        params: { title: title.value },
-        query: { id: articleId.value.toString() }
+        params: { title: article.title },
     });
+};
+
+// 处理页码变化
+const handlePageChange = (page) => {
+    currentPage.value = page;
 };
 </script>
 
@@ -56,8 +74,10 @@ const navigateToArticle = () => {
 /* 外部容器：使用 flex 居中 */
 .article-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    padding: 10px;
+    align-items: center;
+    width: 100%;
 }
 
 /* 文章盒子样式 */
@@ -72,9 +92,7 @@ const navigateToArticle = () => {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease;
     max-width: 800px;
-    /* 最大宽度限制 */
     width: 100%;
-    /* 使盒子填满可用空间，但不超过 max-width */
 }
 
 .article-box:hover {
@@ -127,5 +145,26 @@ const navigateToArticle = () => {
 
 .article-category {
     margin-left: 8px;
+}
+
+/* 分页容器样式 */
+.pagination-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    /* 确保分页居中 */
+    margin-top: 20px;
+    /* 上方间距 */
+}
+
+.el-pagination {
+    display: flex;
+    justify-content: center;
+    max-width: 100%;
+    /* 防止宽度超出 */
+    width: auto;
+    /* 根据内容自适应宽度 */
+    padding: 0 20px;
+    /* 给分页组件两侧加一些间距，避免紧贴边缘 */
 }
 </style>
