@@ -1,10 +1,5 @@
 <template>
         <ArticleItemComponent />
-        <ArticleItemComponent />
-        <ArticleItemComponent />
-        <ArticleItemComponent />
-        <ArticleItemComponent />
-
 </template>
 
 

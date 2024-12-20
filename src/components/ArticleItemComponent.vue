@@ -23,8 +23,6 @@
                 </div>
             </NuxtLink>
         </div>
-
-
     </div>
 </template>
 
@@ -32,7 +30,17 @@
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 
-const articles = ref([
+interface Article {
+    title: string;
+    description: string;
+    imageUrl: string;
+    tags: string[];
+    category: string;
+    date: string;
+    formattedDate?: string;
+}
+
+const articles = ref<Article[]>([
     { title: '文章 1', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-01' },
     { title: '文章 2', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-02' },
     { title: '文章 3', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-03' },
@@ -40,11 +48,25 @@ const articles = ref([
     { title: '文章 5', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-05' },
     { title: '文章 6', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-06' },
     { title: '文章 7', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-07' },
-    // 假设更多文章
 ]);
 
-const itemsPerPage = 5;  // 每页显示 5 篇文章
-const currentPage = ref(1);  // 当前页码
+const itemsPerPage = 5; // 每页显示 5 篇文章
+const currentPage = ref(1); // 当前页码
+
+// 格式化日期，示例代码
+const formatDate = (date: string): string => {
+    const options: Intl.DateTimeFormatOptions = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    };
+    return new Date(date).toLocaleDateString('zh-CN', options);
+};
+
+// 给每篇文章添加格式化日期
+articles.value.forEach((article) => {
+    article.formattedDate = formatDate(article.date);
+});
 
 // 分页后的文章列表
 const paginatedArticles = computed(() => {
@@ -57,7 +79,7 @@ const paginatedArticles = computed(() => {
 const router = useRouter();
 
 // 跳转到文章详情
-const navigateToArticle = (article) => {
+const navigateToArticle = (article: Article) => {
     router.push({
         name: 'article',
         params: { title: article.title },
@@ -65,7 +87,7 @@ const navigateToArticle = (article) => {
 };
 
 // 处理页码变化
-const handlePageChange = (page) => {
+const handlePageChange = (page: number) => {
     currentPage.value = page;
 };
 </script>
