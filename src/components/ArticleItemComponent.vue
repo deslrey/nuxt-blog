@@ -3,7 +3,7 @@
         <!-- 文章列表 -->
         <div v-for="(article, index) in paginatedArticles" :key="index" class="article-box">
             <!-- 使用查询参数 id 和 title -->
-            <NuxtLink :to="`/article?title=${article.title}&id=${article.id}`" class="article-box">
+            <NuxtLink :to="`/article/${article.title}`" class="article-box" @click="selectArticle(article.id)">
                 <!-- 左侧图片 -->
                 <div class="article-image">
                     <img :src="article.imageUrl" alt="Article Image" />
@@ -29,8 +29,17 @@
 <script lang="ts" setup>
 import { ref, computed } from 'vue';
 
+import { useArticleStore } from '~/stores/articleStore'; // 引入 Pinia store
+
+const articleStore = useArticleStore();
+
+// 存储选中的文章 ID
+const selectArticle = (id: number) => {
+    articleStore.setSelectedArticleId(id);
+};
+
 interface Article {
-    id: string;
+    id: number;
     title: string;
     description: string;
     imageUrl: string;
@@ -41,13 +50,13 @@ interface Article {
 }
 
 const articles = ref<Article[]>([
-    { id: '1', title: '文章1', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-01' },
-    { id: '2', title: '文章2', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-02' },
-    { id: '3', title: '文章3', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-03' },
-    { id: '4', title: '文章4', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-04' },
-    { id: '5', title: '文章5', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-05' },
-    { id: '6', title: '文章6', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-06' },
-    { id: '7', title: '文章7', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-07' },
+    { id: 1, title: '文章1', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-01' },
+    { id: 2, title: '文章2', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-02' },
+    { id: 3, title: '文章3', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-03' },
+    { id: 4, title: '文章4', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-04' },
+    { id: 5, title: '文章5', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-05' },
+    { id: 6, title: '文章6', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-06' },
+    { id: 7, title: '文章7', description: '这是一篇文章的简短描述', imageUrl: 'https://via.placeholder.com/150', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-07' },
 ]);
 
 const itemsPerPage = 5; // 每页显示 5 篇文章
