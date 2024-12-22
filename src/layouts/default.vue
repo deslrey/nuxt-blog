@@ -4,19 +4,29 @@
         <nav :class="{ 'scrolled': isScrolled }">
             <ul>
                 <li>
-                    <NuxtLink to="/">首页</NuxtLink>
+                    <NuxtLink to="/">
+                        <i class="fas fa-home"></i> 首页
+                    </NuxtLink>
                 </li>
                 <li>
-                    <NuxtLink to="/about">归档</NuxtLink>
+                    <NuxtLink to="/about">
+                        <i class="fas fa-archive"></i> 归档
+                    </NuxtLink>
                 </li>
                 <li>
-                    <NuxtLink to="/archive">分类</NuxtLink>
+                    <NuxtLink to="/archive">
+                        <i class="fas fa-sitemap"></i> 分类
+                    </NuxtLink>
                 </li>
                 <li>
-                    <NuxtLink to="/label">标签</NuxtLink>
+                    <NuxtLink to="/label">
+                        <i class="fas fa-tags"></i> 标签
+                    </NuxtLink>
                 </li>
                 <li>
-                    <NuxtLink to="/about">关于</NuxtLink>
+                    <NuxtLink to="/about">
+                        <i class="fas fa-user"></i> 关于
+                    </NuxtLink>
                 </li>
             </ul>
         </nav>
@@ -27,6 +37,7 @@
         </main>
     </div>
 </template>
+
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
@@ -103,11 +114,26 @@ nav li a {
     text-decoration: none;
     font-weight: 700;
     font-size: 22px;
-    /* 增大字体大小 */
     text-transform: uppercase;
     letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    /* 对齐图标和文字 */
+    gap: 8px;
+    /* 图标和文字之间的间隔 */
     transition: color 0.3s ease-in-out;
-    /* 平滑过渡效果 */
+}
+
+/* 图标样式 */
+nav li i {
+    font-size: 1.2em;
+    /* 调整图标大小 */
+}
+
+/* 悬停时的颜色变化 */
+nav li a:hover {
+    color: #007BFF;
+    text-decoration: underline;
 }
 
 /* 悬停时的放大效果 */
@@ -115,11 +141,6 @@ nav li:hover {
     transform: scale(1.1);
 }
 
-nav li a:hover {
-    color: #007BFF;
-    text-decoration: underline;
-    /* 悬停时颜色变蓝且加下划线 */
-}
 
 /* 内容区域 */
 main {
