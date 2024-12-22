@@ -1,6 +1,6 @@
 <template>
         <ArticleItemComponent />
-        <ArticleItemComponent />
+        <!-- <ArticleItemComponent /> -->
 </template>
 
 
