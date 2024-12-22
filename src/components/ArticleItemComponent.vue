@@ -152,7 +152,10 @@ const jumpToPage = () => {
     border-radius: 8px;
     overflow: hidden;
     text-decoration: none;
-    background-color: #fff;
+    background: rgba(255, 255, 255, 0.3);
+    /* 设置透明背景 */
+    backdrop-filter: blur(10px);
+    /* 设置模糊效果 */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease;
     width: 100%;
