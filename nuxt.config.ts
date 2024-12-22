@@ -9,6 +9,8 @@ export default defineNuxtConfig({
   css: [
     'element-plus/dist/index.css',
     'element-plus/theme-chalk/display.css',
-    '~/assets/css/global.css'
+    '~/assets/css/global.css',
+    '@fortawesome/fontawesome-free/css/all.css', // 引入 Font Awesome 样式
+
   ],
 });
