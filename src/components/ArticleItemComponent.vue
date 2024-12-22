@@ -75,7 +75,7 @@ const articles = ref<Article[]>([
     { id: 7, title: '文章7', description: '这是一篇文章的简短描述', imageUrl: '', tags: ['技术', '编程'], category: '前端开发', date: '2024-12-07' },
 ]);
 
-const itemsPerPage = 6; // 每页显示 6 篇文章
+const itemsPerPage = 6; // 每页显示  篇文章
 const currentPage = ref(1); // 当前页码
 const jumpPage = ref(1); // 跳转页码
 
@@ -139,8 +139,10 @@ const jumpToPage = () => {
     gap: 24px;
     justify-items: center;
     margin: 0 auto;
-    max-width: 800px;
+    width: 100%;
+    /* max-width: 800px; */
     /* 最大宽度限制 */
+    padding-top: 20%;
 }
 
 /* 文章盒子样式 */
@@ -154,7 +156,7 @@ const jumpToPage = () => {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease;
     width: 100%;
-    max-width: 800px;
+    max-width: max-content;
     /* 最大宽度 */
     margin: 0 auto;
     padding: 12px;
