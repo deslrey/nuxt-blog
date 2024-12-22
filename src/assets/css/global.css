@@ -20,15 +20,21 @@ body {
 
 body::after {
     content: '';
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    /* background: rgba(0, 0, 0, 0.3); */
-    /* 半透明黑色遮罩层 */
+    background: rgba(0, 0, 0, 0.4);
+    /* 增加透明度 */
+    /* background: rgba(255, 255, 255, 0.1); */
+    /* 适配透明度 */
+    backdrop-filter: blur(1px);
+    /* 适度模糊 */
     pointer-events: none;
     /* 确保遮罩层不会影响页面交互 */
     z-index: -1;
     /* 确保遮罩层位于页面内容下方 */
+    /* filter: blur(3px); */
+    /* 给整个伪元素加上模糊 */
 }
