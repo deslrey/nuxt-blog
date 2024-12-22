@@ -16,13 +16,14 @@
                 <ul>
                     <!-- 渲染目录，支持层级关系 -->
                     <li v-for="(heading, index) in headings" :key="index">
-                        <a :href="`#${heading.id}`">{{ heading.text }}</a>
+                        <a @click.prevent="scrollToHeading(heading.id)">{{ heading.text }}</a>
                         <ul v-if="heading.children && heading.children.length > 0">
                             <li v-for="(subHeading, subIndex) in heading.children" :key="subIndex">
-                                <a :href="`#${subHeading.id}`">&emsp;{{ subHeading.text }}</a>
+                                <a @click.prevent="scrollToHeading(subHeading.id)">&emsp;{{ subHeading.text }}</a>
                                 <ul v-if="subHeading.children && subHeading.children.length > 0">
                                     <li v-for="(subSubHeading, subSubIndex) in subHeading.children" :key="subSubIndex">
-                                        <a :href="`#${subSubHeading.id}`">&emsp;&emsp;{{ subSubHeading.text }}</a>
+                                        <a @click.prevent="scrollToHeading(subSubHeading.id)">&emsp;&emsp;{{
+                                            subSubHeading.text }}</a>
                                     </li>
                                 </ul>
                             </li>
@@ -45,10 +46,11 @@ const markdownText = `
   ## 下载RabbitMQ
   ### 安装Erlang
   ### 安装Socat
+
   ### 安装RabbitMQ
   ## 启动RabbitMQ服务
   # RabbitMQWeb管理界面及授权操作
-  `;
+`;
 
 // 获取动态路由中的 article 名称
 const route = useRoute();
@@ -140,6 +142,21 @@ const loadArticle = async () => {
 onMounted(() => {
     loadArticle();
 });
+
+// 滚动到指定的标题
+const scrollToHeading = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+        const navbarHeight = document.querySelector('nav')?.clientHeight || 0;  // 获取导航栏高度
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.screenX - navbarHeight;
+
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth', // 平滑滚动
+        });
+    }
+};
 </script>
 
 <style lang="css" scoped>
@@ -148,15 +165,17 @@ onMounted(() => {
     justify-content: center;
     gap: 30px;
     width: 100%;
-    max-width: 1300px;
+    max-width: 70%;
     margin: 0 auto;
 }
 
 .article-card {
     display: flex;
-    gap: 30px;
+    gap: 50px;
     width: 100%;
     flex-grow: 1;
+    padding-left: 10%;
+    padding-top: 25%;
 }
 
 .article-content {
@@ -170,8 +189,8 @@ onMounted(() => {
 
 .toc {
     position: sticky;
-    top: 20px;
-    width: 250px;
+    top: 40px;
+    width: 300px;
     background-color: #f9f9f9;
     padding: 15px;
     border-radius: 8px;
