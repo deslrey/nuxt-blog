@@ -30,9 +30,6 @@ const githubLink = ref("https://github.com/deslrey");
     justify-content: center;
     align-items: center;
     height: 700px;
-    /* 使容器占满整个视口 */
-    /* background-color: #f7f7f7; */
-    /* padding: 20px; */
 }
 
 .profile-card {
@@ -43,24 +40,49 @@ const githubLink = ref("https://github.com/deslrey");
     border-radius: 12px;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
     padding: 40px;
-    width: 350px;
-    /* 更宽的卡片 */
+    width: 400px;
     text-align: center;
     max-width: 100%;
+    position: relative;
+    margin-top: 15%;
+    /* 将卡片往下移动 80px */
+
 }
 
+.avatar {
+    position: absolute;
+    top: -110px;
+    left: 50%;
+    transform: translateX(-50%);
+    /* padding: 5px; */
+    /* 添加渐变边框和阴影效果 */
+    border-radius: 60%;
+    /* border: 6px solid transparent; */
+    /* background: linear-gradient(45deg, #ff6ec7, #ff6347); */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+    /* 动画 */
+}
+
+/* 添加一个悬浮效果 */
 .avatar img {
-    width: 120px;
-    height: 120px;
+    width: 170px;
+    height: 170px;
     border-radius: 50%;
     object-fit: cover;
-    margin-bottom: 20px;
-    border: 3px solid #f1f1f1;
+    transition: transform 0.3s ease;
+    /* 动画效果 */
+}
+
+.avatar img:hover {
+    transform: scale(1.1);
+    /* 鼠标悬停时头像放大 */
 }
 
 .profile-info h2 {
     font-size: 1.8rem;
     font-weight: 600;
+    margin-top: 50px;
     margin-bottom: 10px;
     color: #333;
 }
