@@ -40,8 +40,9 @@ const markdownText = `
   
   这里是二级标题的内容
   
-  ![image-20241222141316088](data.assets/image-20241222141316088.png)
+  ![image-20241222141316088](../../assets/md/data.assets/image-20241222141316088.png)
   
+  # 另一个一级标题
   # 另一个一级标题
   # 另一个一级标题
   # 另一个一级标题
@@ -163,20 +164,30 @@ onMounted(() => {
 .article-container {
     display: flex;
     justify-content: center;
-    padding: 20px;
+    /* padding: 20px; */
+    padding-top: 25%;
     gap: 30px;
+    width: 100%;
+    /* 容器宽度占满屏幕 */
+    max-width: 1300px;
+    /* 最大宽度限制 */
+    margin: 0 auto;
+    /* 保证容器居中 */
 }
 
 .article-card {
     display: flex;
-    gap: 20px;
-    max-width: 1000px;
+    gap: 30px;
     width: 100%;
+    flex-grow: 1;
+    /* 让内容区域和目录区域能够合理分配空间 */
 }
 
 .article-content {
     flex-grow: 1;
-    max-width: 70%;
+    /* 文章内容区域占据剩余空间 */
+    max-width: 75%;
+    /* 设置文章内容区域宽度为 75% */
     background-color: #ffffff;
     padding: 20px;
     border-radius: 8px;
@@ -187,10 +198,15 @@ onMounted(() => {
     position: sticky;
     top: 20px;
     width: 250px;
+    /* 固定目录宽度 */
     background-color: #f9f9f9;
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 90vh;
+    /* 目录最大高度为视口高度 */
+    overflow-y: auto;
+    /* 目录内容溢出时可以滚动 */
 }
 
 .toc h2 {
