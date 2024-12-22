@@ -106,13 +106,13 @@ main {
     flex-grow: 1;
     /* 让内容区域占满剩余空间 */
     padding: 20px;
-    background-color: rgba(255, 255, 255, 0.2);
+    /* background-color: rgba(255, 255, 255, 0.2); */
     /* 半透明背景 */
     overflow-y: auto;
     /* 内容超过时显示滚动条 */
     margin-top: 60px;
     /* 确保内容区从导航栏下方开始 */
-    backdrop-filter: blur(3px);
+    /* backdrop-filter: blur(3px); */
     /* 背景模糊效果 */
     border-radius: 8px;
     /* 可选：使角落圆润 */
