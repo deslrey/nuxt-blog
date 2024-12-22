@@ -110,7 +110,7 @@ main {
     /* 半透明背景 */
     overflow-y: auto;
     /* 内容超过时显示滚动条 */
-    margin-top: 60px;
+    margin-top: 20%;
     /* 确保内容区从导航栏下方开始 */
     /* backdrop-filter: blur(3px); */
     /* 背景模糊效果 */
