@@ -6,7 +6,6 @@
             <NuxtLink :to="`/article/${article.title}`" class="article-box" @click="selectArticle(article.id)">
                 <!-- 左侧图片 -->
                 <div class="article-image">
-                    <!-- 如果没有指定图片，则使用默认图片 -->
                     <img src="../assets/images/cs.jpg" alt="Article Image" />
                 </div>
 
@@ -132,6 +131,7 @@ const jumpToPage = () => {
 
 <style scoped>
 /* 外部容器：每行只显示一个文章项 */
+/* 外部容器：每行只显示一个文章项 */
 .article-container {
     display: grid;
     grid-template-columns: 1fr;
@@ -152,19 +152,18 @@ const jumpToPage = () => {
     border-radius: 8px;
     overflow: hidden;
     text-decoration: none;
-    background: rgba(255, 255, 255, 0.3);
-    /* 设置透明背景 */
-    backdrop-filter: blur(10px);
-    /* 设置模糊效果 */
+    background: rgba(255, 255, 255, 0.7);
+    /* 设置背景透明度 */
+    /* 去掉任何不必要的额外背景或者模糊效果 */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease;
     width: 100%;
     max-width: max-content;
-    /* 最大宽度 */
     margin: 0 auto;
     padding: 12px;
     /* 给盒子添加一点内边距 */
 }
+
 
 .article-box:hover {
     transform: scale(1.05);
