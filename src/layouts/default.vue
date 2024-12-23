@@ -1,7 +1,8 @@
 <template>
     <div class="layout">
-        <!-- 固定导航栏，只有在不是登录页面时显示 -->
-        <nav v-if="!isLoginRoute" :class="{ 'scrolled': isScrolled }">
+        <!-- 固定导航栏，只有在不是登录或后台管理页面时显示 -->
+        <nav v-if="!layoutStore.isLoginRoute && !layoutStore.isManageRoute"
+            :class="{ 'scrolled': layoutStore.isScrolled }">
             <ul>
                 <li>
                     <NuxtLink to="/">
@@ -29,7 +30,7 @@
                     </NuxtLink>
                 </li>
 
-                <!-- 修改了后台图标为控制面板（fa-tachometer-alt） -->
+                <!-- 后台图标 -->
                 <li>
                     <NuxtLink to="/login">
                         <i class="fas fa-tachometer-alt"></i> 后台
@@ -48,19 +49,21 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
+import { useLayoutStore } from '~/stores/layoutStore';
 
-const isScrolled = ref(false);
+// 获取 layout store
+const layoutStore = useLayoutStore();
 const route = useRoute();
-const isLoginRoute = ref(false);
 
 // 监听页面滚动，设置导航栏是否变为固定
 const handleScroll = () => {
-    isScrolled.value = window.scrollY > 50;  // 滚动超过50px时改变状态
+    layoutStore.setScrolled(window.scrollY > 50);  // 滚动超过50px时改变状态
 };
 
-// 监听路由变化，判断当前是否是登录页面
+// 监听路由变化，判断当前是否是登录页面或后台管理页面
 watchEffect(() => {
-    isLoginRoute.value = route.path === '/login';
+    layoutStore.setLoginRoute(route.path === '/login');
+    layoutStore.setManageRoute(route.path.includes('/manage'));  // 判断路径中是否包含 "/manage"
 });
 
 // 添加滚动事件监听
