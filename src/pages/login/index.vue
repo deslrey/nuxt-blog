@@ -28,6 +28,9 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
+import { ElMessage } from 'element-plus'
+
+
 const username = ref('');
 const password = ref('');
 const router = useRouter();
@@ -36,9 +39,13 @@ const router = useRouter();
 const handleSubmit = () => {
     if (username.value === 'admin' && password.value === 'admin') {
         // 登录成功后跳转到后台页面
+        ElMessage({
+            message: '登录成功!',
+            type: 'success',
+        })
         router.push('/manage');
     } else {
-        alert('用户名或密码错误');
+        ElMessage.error('用户名或密码错误!!!')
     }
 };
 
