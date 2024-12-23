@@ -1,6 +1,10 @@
 <template>
     <div class="login-container">
         <div class="login-card">
+            <!-- 返回按钮 -->
+            <button class="back-button" @click="goBack">
+                <i class="fas fa-arrow-left"></i>
+            </button>
             <h1 class="title">登录</h1>
             <!-- 登录表单 -->
             <form @submit.prevent="handleSubmit">
@@ -37,6 +41,11 @@ const handleSubmit = () => {
         alert('用户名或密码错误');
     }
 };
+
+// 返回首页
+const goBack = () => {
+    router.push('/');
+};
 </script>
 
 <style scoped>
@@ -45,6 +54,7 @@ const handleSubmit = () => {
     display: flex;
     justify-content: center;
     align-items: center;
+    /* 占满视口高度 */
     margin: 0;
 }
 
@@ -57,7 +67,25 @@ const handleSubmit = () => {
     width: 100%;
     max-width: 450px;
     margin-top: 5%;
-    /* 最大宽度 450px */
+    position: relative;
+    /* 使返回按钮定位在卡片内 */
+}
+
+/* 返回按钮样式 */
+.back-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: none;
+    border: none;
+    color: #007bff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.back-button:hover {
+    color: #0056b3;
 }
 
 .title {
