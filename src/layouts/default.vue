@@ -9,12 +9,12 @@
                     </NuxtLink>
                 </li>
                 <li>
-                    <NuxtLink to="/about">
+                    <NuxtLink to="/archive">
                         <i class="fas fa-archive"></i> 归档
                     </NuxtLink>
                 </li>
                 <li>
-                    <NuxtLink to="/archive">
+                    <NuxtLink to="/sort">
                         <i class="fas fa-sitemap"></i> 分类
                     </NuxtLink>
                 </li>
