@@ -3,6 +3,7 @@
         <h1>我是文章管理界面</h1>
         <div style="display: flex; justify-content: flex-end; margin-bottom: 20px; margin-right: 10%;">
             <el-button type="primary" @click="dialogVisible = true">添加文章</el-button>
+            <el-button type="primary" @click="quitLogin">退出</el-button>
         </div>
         <el-table size="large" stripe
             :data="filterTableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
@@ -58,7 +59,9 @@
 </template>
 
 <script lang="ts" setup>
+import { Notification } from '#build/imports';
 import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 interface Article {
     id: number;
@@ -70,7 +73,7 @@ interface Article {
     createdDate: string;
     isVisible: boolean;
 }
-
+const router = useRouter();
 const search = ref('');
 const currentPage = ref(1);
 const pageSize = ref(5);
@@ -140,6 +143,12 @@ const addArticle = () => {
         isVisible: true,
     });
 };
+
+const quitLogin = () => {
+    Notification.success('退出登录成功!')
+    router.push('/');
+}
+
 </script>
 
 <style scoped>
