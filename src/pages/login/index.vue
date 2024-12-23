@@ -27,8 +27,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import notification from '~/utils/Notification';
 
-import { ElMessage } from 'element-plus'
 
 
 const username = ref('');
@@ -38,14 +38,10 @@ const router = useRouter();
 // 模拟登录处理
 const handleSubmit = () => {
     if (username.value === 'admin' && password.value === 'admin') {
-        // 登录成功后跳转到后台页面
-        ElMessage({
-            message: '登录成功!',
-            type: 'success',
-        })
+        notification.success("登录成功")
         router.push('/manage');
     } else {
-        ElMessage.error('用户名或密码错误!!!')
+        notification.error("登录失败")
     }
 };
 
