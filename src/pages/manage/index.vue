@@ -1,23 +1,27 @@
 <template>
     <div>
         <h1>我是文章管理界面</h1>
-        <el-table :data="filterTableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 20px; margin-right: 10%;">
+            <el-button type="primary" @click="dialogVisible = true">添加文章</el-button>
+        </div>
+        <el-table size="large" stripe
+            :data="filterTableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
             style="width: 80%; margin: 0 auto;">
-            <el-table-column prop="id" label="ID" />
-            <el-table-column prop="title" label="标题" />
-            <el-table-column prop="description" label="描述" />
-            <el-table-column prop="storagePath" label="存储地址" />
-            <el-table-column prop="tags" label="标签" />
-            <el-table-column prop="category" label="分类" />
-            <el-table-column prop="createdDate" label="创建日期" />
-            <el-table-column align="right" label="操作">
+            <el-table-column align="center" prop="id" label="ID" />
+            <el-table-column align="center" prop="title" label="标题" />
+            <el-table-column align="center" prop="description" label="描述" />
+            <el-table-column align="center" prop="storagePath" label="存储地址" />
+            <el-table-column align="center" prop="tags" label="标签" />
+            <el-table-column align="center" prop="category" label="分类" />
+            <el-table-column align="center" prop="createdDate" label="创建日期" />
+            <el-table-column align="center" label="操作">
                 <template #header>
-                    <el-input v-model="search" size="small" placeholder="搜索标题或者描述" style="width: 100%;" />
+                    <el-input v-model="search" size="large" placeholder="搜索标题或者描述" style="width: 100%;" />
                 </template>
                 <template #default="scope">
-                    <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
+                    <el-button size="default" @click="handleEdit(scope.$index, scope.row)"
                         style="margin-right: 10px;">编辑</el-button>
-                    <el-switch v-model="scope.row.isVisible" active-text="显示" inactive-text="隐藏"
+                    <el-switch v-model="scope.row.isVisible"
                         @change="handleVisibilityChange(scope.$index, scope.row)" />
                 </template>
             </el-table-column>
@@ -26,6 +30,30 @@
             <el-pagination background layout="prev, pager, next, sizes, jumper" :total="tableData.length"
                 v-model:page-size="pageSize" v-model:current-page="currentPage" />
         </div>
+
+        <el-dialog title="添加文章" v-model="dialogVisible">
+            <el-form :model="newArticle" label-width="100px">
+                <el-form-item label="标题">
+                    <el-input v-model="newArticle.title" />
+                </el-form-item>
+                <el-form-item label="描述">
+                    <el-input v-model="newArticle.description" />
+                </el-form-item>
+                <el-form-item label="存储地址">
+                    <el-input v-model="newArticle.storagePath" />
+                </el-form-item>
+                <el-form-item label="标签">
+                    <el-input v-model="newArticle.tags" />
+                </el-form-item>
+                <el-form-item label="分类">
+                    <el-input v-model="newArticle.category" />
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="addArticle">添加</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -46,7 +74,18 @@ interface Article {
 const search = ref('');
 const currentPage = ref(1);
 const pageSize = ref(5);
-const tableData: Article[] = [
+const dialogVisible = ref(false);
+const newArticle = ref<Article>({
+    id: 0,
+    title: '',
+    description: '',
+    storagePath: '',
+    tags: '',
+    category: '',
+    createdDate: '',
+    isVisible: true,
+});
+const tableData = ref([
     {
         id: 1,
         title: '如何使用 Nuxt 构建博客',
@@ -67,10 +106,10 @@ const tableData: Article[] = [
         createdDate: '2024-12-15',
         isVisible: false,
     },
-];
+]);
 
 const filterTableData = computed(() =>
-    tableData.filter(
+    tableData.value.filter(
         (data) =>
             !search.value ||
             data.title.toLowerCase().includes(search.value.toLowerCase()) ||
@@ -84,6 +123,22 @@ const handleEdit = (index: number, row: Article) => {
 
 const handleVisibilityChange = (index: number, row: Article) => {
     console.log('Visibility Changed:', index, row);
+};
+
+const addArticle = () => {
+    const newId = tableData.value.length ? tableData.value[tableData.value.length - 1].id + 1 : 1;
+    tableData.value.push({ ...newArticle.value, id: newId });
+    dialogVisible.value = false;
+    Object.assign(newArticle.value, {
+        id: 0,
+        title: '',
+        description: '',
+        storagePath: '',
+        tags: '',
+        category: '',
+        createdDate: '',
+        isVisible: true,
+    });
 };
 </script>
 
