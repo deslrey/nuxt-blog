@@ -29,9 +29,10 @@
                     </NuxtLink>
                 </li>
 
+                <!-- 修改了后台图标为控制面板（fa-tachometer-alt） -->
                 <li>
                     <NuxtLink to="/login">
-                        <i class="fas fa-user"></i> 后台
+                        <i class="fas fa-tachometer-alt"></i> 后台
                     </NuxtLink>
                 </li>
             </ul>
@@ -72,7 +73,6 @@ onUnmounted(() => {
     window.removeEventListener('scroll', handleScroll);
 });
 </script>
-
 
 <style scoped>
 /* 固定导航栏，设置透明背景和凹凸效果 */
