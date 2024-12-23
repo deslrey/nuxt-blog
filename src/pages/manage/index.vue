@@ -1,7 +1,8 @@
 <template>
     <div>
         <h1>我是文章管理界面</h1>
-        <el-table :data="filterTableData" style="width: 80%; margin: 0 auto;">
+        <el-table :data="filterTableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
+            style="width: 80%; margin: 0 auto;">
             <el-table-column prop="id" label="ID" />
             <el-table-column prop="title" label="标题" />
             <el-table-column prop="description" label="描述" />
@@ -9,18 +10,22 @@
             <el-table-column prop="tags" label="标签" />
             <el-table-column prop="category" label="分类" />
             <el-table-column prop="createdDate" label="创建日期" />
-            <el-table-column align="right">
+            <el-table-column align="right" label="操作">
                 <template #header>
                     <el-input v-model="search" size="small" placeholder="搜索标题或者描述" style="width: 100%;" />
                 </template>
                 <template #default="scope">
                     <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
                         style="margin-right: 10px;">编辑</el-button>
-                    <el-switch v-model="scope.row.isVisible"
+                    <el-switch v-model="scope.row.isVisible" active-text="显示" inactive-text="隐藏"
                         @change="handleVisibilityChange(scope.$index, scope.row)" />
                 </template>
             </el-table-column>
         </el-table>
+        <div class="pagination-container">
+            <el-pagination background layout="prev, pager, next, sizes, jumper" :total="tableData.length"
+                v-model:page-size="pageSize" v-model:current-page="currentPage" />
+        </div>
     </div>
 </template>
 
@@ -38,7 +43,9 @@ interface Article {
     isVisible: boolean;
 }
 
-const search = ref<string>('');
+const search = ref('');
+const currentPage = ref(1);
+const pageSize = ref(5);
 const tableData: Article[] = [
     {
         id: 1,
@@ -108,5 +115,11 @@ h1 {
 
 .el-input {
     margin-bottom: 10px;
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: flex-end;
+    margin: 20px 10%;
 }
 </style>
