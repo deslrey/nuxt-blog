@@ -15,11 +15,6 @@
             <div class="form-group">
                 <button type="submit" class="login-button">登录</button>
             </div>
-            <div class="form-group">
-                <p class="forgot-password">
-                    <NuxtLink to="/forgot-password">忘记密码？</NuxtLink>
-                </p>
-            </div>
         </form>
     </div>
 </template>
@@ -104,19 +99,5 @@ input:focus {
 
 .login-button:hover {
     background-color: #0056b3;
-}
-
-.forgot-password {
-    text-align: center;
-    margin-top: 1rem;
-}
-
-.forgot-password a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-.forgot-password a:hover {
-    text-decoration: underline;
 }
 </style>
