@@ -1,7 +1,7 @@
 <template>
     <div class="layout">
-        <!-- 固定导航栏 -->
-        <nav :class="{ 'scrolled': isScrolled }">
+        <!-- 固定导航栏，只有在不是登录页面时显示 -->
+        <nav v-if="!isLoginRoute" :class="{ 'scrolled': isScrolled }">
             <ul>
                 <li>
                     <NuxtLink to="/">
@@ -28,6 +28,12 @@
                         <i class="fas fa-user"></i> 关于
                     </NuxtLink>
                 </li>
+
+                <li>
+                    <NuxtLink to="/login">
+                        <i class="fas fa-user"></i> 后台
+                    </NuxtLink>
+                </li>
             </ul>
         </nav>
 
@@ -38,16 +44,23 @@
     </div>
 </template>
 
-
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, watchEffect } from 'vue';
+import { useRoute } from 'vue-router';
 
 const isScrolled = ref(false);
+const route = useRoute();
+const isLoginRoute = ref(false);
 
 // 监听页面滚动，设置导航栏是否变为固定
 const handleScroll = () => {
     isScrolled.value = window.scrollY > 50;  // 滚动超过50px时改变状态
 };
+
+// 监听路由变化，判断当前是否是登录页面
+watchEffect(() => {
+    isLoginRoute.value = route.path === '/login';
+});
 
 // 添加滚动事件监听
 onMounted(() => {
@@ -59,6 +72,7 @@ onUnmounted(() => {
     window.removeEventListener('scroll', handleScroll);
 });
 </script>
+
 
 <style scoped>
 /* 固定导航栏，设置透明背景和凹凸效果 */
