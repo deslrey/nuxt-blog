@@ -40,6 +40,11 @@ import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { marked } from 'marked'; // 引入 marked 库用于解析 Markdown
 
+import { useArticleStore } from '../../stores/articleStore';
+const articleStore = useArticleStore();
+
+
+
 // 模拟 Markdown 数据
 const markdownText = `
   # 下载安装启动RabbitMQ
@@ -51,6 +56,32 @@ const markdownText = `
   ## 启动RabbitMQ服务
   # RabbitMQWeb管理界面及授权操作
 `;
+
+
+const api = '/deslre/article/getId';
+
+const getArticleData = async (id: number | null) => {
+    const formData = new FormData();
+    if (id !== null) {
+        formData.append('id', id.toString());
+    }
+
+    const { data: result, error } = await useFetch(api, {
+        baseURL: 'http://localhost:8080',
+        method: 'post',
+        // headers: {
+        //     "Content-Type": "multipart/form-data",
+        // },
+        body: formData, // 使用 FormData
+    });
+
+    console.log('result ======> ', result.value);
+    console.log('error ======> ', error);
+};
+
+
+getArticleData(1);
+// getArticleData(articleStore.getSelectedArticleId);
 
 // 获取动态路由中的 article 名称
 const route = useRoute();
