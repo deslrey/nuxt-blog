@@ -12,25 +12,41 @@
 
             <!-- 折叠内容 -->
             <ul v-show="isExpanded(category)" class="article-list">
-                <li v-for="article in articles" :key="article.id" class="article-item">
+                <li v-for="article in articles" :key="article.id" class="article-item"
+                    @click="handleClick(article.id, article.title)">
                     {{ article.title }}
                 </li>
             </ul>
+
         </div>
     </div>
 </template>
-
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useArticleStore } from '@/stores/articleStore'; // 引入 Pinia 的文章 Store
+import { useRouter } from 'vue-router';
+
+// 路由和 Store 实例
+const router = useRouter();
+const articleStore = useArticleStore();
 
 // 模拟文章数据
-const articles = ref([
-    { id: 1, title: 'Redis实现自增ID', category: 'Redis' },
-    { id: 2, title: '黑马点评', category: 'Redis' },
-    { id: 3, title: 'Linux配置Neo4j', category: 'Neo4j' },
-    { id: 4, title: 'Neo4j基础命令', category: 'Neo4j' },
-    { id: 5, title: 'CentOS7离线安装Python3环境', category: 'Python3' },
-]);
+const articles = ref([]);
+
+// API 请求地址
+const api = "/deslre/article/getArticles";
+
+// 获取数据并处理
+const addData = async () => {
+    const { data: result } = await $fetch(api, {
+        baseURL: 'http://localhost:8080',
+    });
+    articles.value = result;
+};
+
+onMounted(() => {
+    addData();
+});
 
 // 按分类分组文章
 const groupedArticles = computed(() => {
@@ -59,7 +75,17 @@ const toggleCategory = (category) => {
 
 // 判断分类是否展开
 const isExpanded = (category) => expandedCategories.value.has(category);
+
+// 文章点击处理逻辑
+const handleClick = (id, title) => {
+    // 存储文章 ID 到 Pinia
+    articleStore.setSelectedArticleId(id);
+
+    // 跳转到详情页
+    router.push(`/article/${encodeURIComponent(title)}`);
+};
 </script>
+
 
 <style scoped>
 /* 页面整体样式 */
