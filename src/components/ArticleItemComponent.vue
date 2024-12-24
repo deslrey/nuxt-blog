@@ -14,7 +14,7 @@
                     <h2 class="article-title">{{ article.title }}</h2>
                     <p class="article-description">{{ article.description }}</p>
                     <div class="article-meta">
-                        <span class="article-date">{{ article.formattedDate }}</span>
+                        <span class="article-date">{{ article.updateTime }}</span>
                         <span class="article-category">{{ article.category }}</span>
                     </div>
                     <div class="article-tags">
@@ -42,7 +42,7 @@
 </template>
 
 <script setup>
-import { Notification } from '#build/imports';
+import Notification from '../utils/Notification';
 import { ref, computed } from 'vue';
 
 import { useArticleStore } from '~/stores/articleStore'; // 引入 Pinia store
@@ -55,6 +55,7 @@ const selectArticle = (id) => {
 };
 
 const articles = ref([]); // 定义一个可响应的数组
+
 const api = "/deslre/article/getArticles";
 
 const addData = async () => {
@@ -63,13 +64,19 @@ const addData = async () => {
     });
 
     if (result.value.code == 200) {
-        articles.value = result.value.data;
+        articles.value = result.value.data.map(article => {
+            return {
+                ...article,
+                tags: article.tags ? article.tags.split('、') : [], // 拆分 tags
+                updateTime: formatDate(article.updateTime), // 格式化日期
+            };
+        });
+
     } else {
         Notification.error("获取文章错误,请稍后重试")
     }
 };
 
-addData(); // 调用函数
 
 
 const itemsPerPage = 6; // 每页显示  篇文章
@@ -86,13 +93,17 @@ const formatDate = (date) => {
     return new Date(date).toLocaleDateString('zh-CN', options);
 };
 
-// 给每篇文章添加格式化日期
-articles.value.forEach((article) => {
-    article.formattedDate = formatDate(article.date);
-});
+await addData()
 
-// 分页后的文章列表
+// // 给每篇文章添加格式化日期
+// articles.value.forEach((article) => {
+//     article.updateTime = formatDate(article.updateTime);
+// });
+
 const paginatedArticles = computed(() => {
+    if (articles.value.length === 0) {
+        return []; // 确保为空时返回空数组
+    }
     const start = (currentPage.value - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     return articles.value.slice(start, end);
@@ -125,10 +136,10 @@ const jumpToPage = () => {
     }
     jumpPage.value = currentPage.value; // 保证输入框显示当前页码
 };
+
 </script>
 
 <style scoped>
-/* 外部容器：每行只显示一个文章项 */
 /* 外部容器：每行只显示一个文章项 */
 .article-container {
     display: grid;
