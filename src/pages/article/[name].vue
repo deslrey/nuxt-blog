@@ -46,7 +46,6 @@ const api = {
     getArticle: '/deslre/article/getArticle',
 };
 
-// 从后端获取文章数据
 const getArticleData = async (id) => {
     try {
         const formData = new FormData();
@@ -60,7 +59,6 @@ const getArticleData = async (id) => {
 
         console.log('result ======> ', result.value);
 
-
         if (result.value.code !== 200) {
             console.error('获取文章失败', error);
             articleContent.value = '<p>文章加载失败，请稍后再试。</p>';
@@ -70,16 +68,23 @@ const getArticleData = async (id) => {
         // 后端直接返回解析后的 HTML
         articleContent.value = result.value.message;
 
-        // 提取标题生成目录
+        // 提取标题生成目录并动态添加 id
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = articleContent.value;
 
         const headingsArray = [];
         let currentLevel = [];
-        tempDiv.querySelectorAll('h1, h2, h3').forEach((heading) => {
-            const id = heading.getAttribute('id');
+
+        // 为每个标题动态生成 id
+        tempDiv.querySelectorAll('h1, h2, h3').forEach((heading, index) => {
             const text = heading.textContent || '';
             const depth = parseInt(heading.tagName[1]);
+
+            // 动态生成一个 id
+            const id = heading.id || `heading-${depth}-${index}`;
+
+            // 设置 id 到标题
+            heading.id = id;
 
             const headingObj = { id, text, children: [] };
             if (depth === 1) {
@@ -95,12 +100,13 @@ const getArticleData = async (id) => {
         });
 
         headings.value = headingsArray;
+
     } catch (err) {
         console.error('加载文章失败', err);
         articleContent.value = '<p>文章加载失败，请稍后再试。</p>';
     }
-
 };
+
 
 const title = ref('')
 
