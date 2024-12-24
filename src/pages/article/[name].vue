@@ -2,6 +2,7 @@
     <div class="article-container">
         <div class="article-card">
             <!-- 文章内容区域 -->
+
             <div class="article-content">
                 <!-- 渲染 HTML 内容 -->
                 <div v-html="articleContent"></div>
@@ -33,9 +34,7 @@
 </template>
 
 <script setup>
-import { da } from 'element-plus/es/locales.mjs';
 import { ref, } from 'vue';
-
 // const route = useRoute();
 // const articleName = computed(() => route.params.name);
 
@@ -100,6 +99,7 @@ const getArticleData = async (id) => {
         console.error('加载文章失败', err);
         articleContent.value = '<p>文章加载失败，请稍后再试。</p>';
     }
+
 };
 
 const title = ref('')
@@ -143,6 +143,8 @@ const scrollToHeading = (id) => {
 </script>
 
 <style scoped>
+@import 'highlight.js/styles/github.css';
+
 .article-container {
     display: flex;
     justify-content: center;
