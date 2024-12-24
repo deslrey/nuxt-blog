@@ -6,14 +6,17 @@
                     <!-- 控制宽度并居中 -->
                     <div class="list-group">
                         <!-- 显示文章总数 -->
-                        <p class="h4">共计 {{ totalArticles }} 篇文章</p>
+                        <h1>
+                            <p class="h4">共计 {{ totalArticles }} 篇文章</p>
+                        </h1>
                         <hr />
 
                         <!-- 按年份分组渲染文章 -->
                         <div v-for="(yearArticles, year) in groupedArticles" :key="year">
                             <p class="h5">{{ year }}</p>
-                            <a v-for="article in yearArticles" :key="article.id" :href="`/article/${article.title}`"
-                                class="list-group-item list-group-item-action">
+                            <a v-for="article in yearArticles" :key="article.id"
+                                class="list-group-item list-group-item-action"
+                                @click.prevent="handleClick(article.id, article.title)">
                                 {{ article.updateTime.slice(5) }} <!-- 只显示 MM-DD -->
                                 <div class="list-group-item-title">{{ article.title }}</div>
                             </a>
@@ -28,6 +31,29 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+
+import { useArticleStore } from '@/stores/articleStore'
+
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const handleClick = (id, title) => {
+    // 存储文章 ID 到 Pinia
+    storeSelectedArticleId(id)
+
+    // 跳转到详情页
+    router.push(`/article/${title}`)
+}
+
+
+// 获取 Pinia Store
+const articleStore = useArticleStore()
+
+// 存储选中的文章 ID
+const storeSelectedArticleId = (id) => {
+    articleStore.setSelectedArticleId(id)
+}
 
 // 文章数据
 const articles = ref([])
@@ -93,6 +119,8 @@ onMounted(() => {
     addData()
 })
 
+
+
 </script>
 
 
@@ -115,14 +143,26 @@ onMounted(() => {
 .list-group-item {
     display: flex;
     justify-content: flex-start;
-    /* 确保所有项都左对齐 */
     align-items: center;
     padding: 15px;
     text-align: left;
-    /* 让内容左对齐 */
     text-decoration: none;
-    /* 去掉默认的下划线 */
+    transition: all 0.3s ease;
+    /* 添加动画过渡 */
+    border-radius: 5px;
+    /* 添加圆角 */
 }
+
+/* 悬停时的高亮和浮动效果 */
+.list-group-item:hover {
+    background-color: #e9ecef;
+    /* 悬停时的背景色 */
+    transform: translateY(-2px);
+    /* 浮动效果 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* 添加阴影 */
+}
+
 
 .list-group-item a {
     text-decoration: none;
