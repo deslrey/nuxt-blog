@@ -33,29 +33,30 @@
                 v-model:page-size="pageSize" v-model:current-page="currentPage" />
         </div>
 
-        <el-dialog title="添加文章" v-model="dialogVisible">
-            <el-form :model="newArticle" label-width="100px">
+        <el-dialog :title="isEditing ? '编辑文章' : '添加文章'" v-model="dialogVisible">
+            <el-form :model="currentArticle" label-width="100px">
                 <el-form-item label="标题">
-                    <el-input v-model="newArticle.title" />
+                    <el-input v-model="currentArticle.title" />
                 </el-form-item>
                 <el-form-item label="描述">
-                    <el-input v-model="newArticle.description" />
+                    <el-input v-model="currentArticle.description" />
                 </el-form-item>
                 <el-form-item label="存储地址">
-                    <el-input v-model="newArticle.storagePath" />
+                    <el-input v-model="currentArticle.storagePath" />
                 </el-form-item>
                 <el-form-item label="标签">
-                    <el-input v-model="newArticle.tags" />
+                    <el-input v-model="currentArticle.tags" />
                 </el-form-item>
                 <el-form-item label="分类">
-                    <el-input v-model="newArticle.category" />
+                    <el-input v-model="currentArticle.category" />
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible = false">取消</el-button>
-                <el-button type="primary" @click="addArticle">添加</el-button>
+                <el-button @click="resetDialog">取消</el-button>
+                <el-button type="primary" @click="isEditing ? updateArticle() : addArticle()">提交</el-button>
             </div>
         </el-dialog>
+
     </div>
 </template>
 
@@ -67,7 +68,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 const search = ref('');
 const currentPage = ref(1);
-const pageSize = ref(5);
+const pageSize = ref(6);
 const dialogVisible = ref(false);
 
 const newArticle = ref({
@@ -105,6 +106,56 @@ const fetchArticles = async () => {
         }));
     } catch (error) {
         alert('获取文章数据失败，请稍后重试！');
+    }
+};
+
+
+const isEditing = ref(false);
+const currentArticle = ref({});
+
+// 点击编辑按钮
+const handleEdit = (index, row) => {
+    isEditing.value = true;
+    dialogVisible.value = true;
+    currentArticle.value = { ...row }; // 将当前行数据复制到编辑表单
+};
+
+const resetDialog = () => {
+    isEditing.value = false;
+    dialogVisible.value = false;
+    currentArticle.value = {};
+};
+
+
+// 更新文章数据
+const updateArticle = async () => {
+    try {
+        const formData = new FormData();
+        formData.append('id', currentArticle.value.id);
+        formData.append('title', currentArticle.value.title);
+        formData.append('description', currentArticle.value.description);
+        formData.append('storagePath', currentArticle.value.storagePath);
+        formData.append('tags', currentArticle.value.tags);
+        formData.append('category', currentArticle.value.category);
+        formData.append('exist', currentArticle.value.exist);
+
+        await $fetch('/deslre/article/updateArticle', {
+            method: 'POST',
+            baseURL: 'http://localhost:8080',
+            body: formData,
+        });
+
+        // 更新表格数据
+        const index = tableData.value.findIndex((item) => item.id === currentArticle.value.id);
+        if (index !== -1) {
+            tableData.value[index] = { ...currentArticle.value };
+        }
+
+        Notification.success("文章更新成功!")
+        dialogVisible.value = false;
+    } catch (error) {
+        console.error('更新文章失败:', error);
+        Notification.error('更新文章失败，请稍后重试！')
     }
 };
 
@@ -151,10 +202,6 @@ const addArticle = async () => {
 };
 
 
-// 编辑文章
-const handleEdit = (index, row) => {
-    console.log('Edit:', index, row);
-};
 
 const handleVisibilityChange = async (row) => {
     try {
