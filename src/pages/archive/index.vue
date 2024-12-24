@@ -13,7 +13,9 @@
 
                         <!-- 按年份分组渲染文章 -->
                         <div v-for="(yearArticles, year) in groupedArticles" :key="year">
-                            <p class="h5">{{ year }}</p>
+                            <h3>
+                                <p>{{ year }}</p>
+                            </h3>
                             <a v-for="article in yearArticles" :key="article.id"
                                 class="list-group-item list-group-item-action"
                                 @click.prevent="handleClick(article.id, article.title)">
