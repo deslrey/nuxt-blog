@@ -109,24 +109,47 @@ const fetchArticles = async () => {
 };
 
 
-// 添加文章
-const addArticle = () => {
-    const newId = tableData.value.length ? tableData.value[tableData.value.length - 1].id + 1 : 1;
-    tableData.value.push({ ...newArticle.value, id: newId });
-    dialogVisible.value = false;
+const addArticle = async () => {
+    try {
+        // 创建 FormData 对象
+        const formData = new FormData();
+        formData.append('title', newArticle.value.title);
+        formData.append('description', newArticle.value.description);
+        formData.append('storagePath', newArticle.value.storagePath);
+        formData.append('tags', newArticle.value.tags);
+        formData.append('category', newArticle.value.category);
+        // 发送请求
+        await $fetch('/deslre/article/addArticle', {
+            method: 'POST',
+            baseURL: 'http://localhost:8080',
+            body: formData,
+        });
 
-    // 重置表单
-    Object.assign(newArticle.value, {
-        id: 0,
-        title: '',
-        description: '',
-        storagePath: '',
-        tags: '',
-        category: '',
-        createdDate: '',
-        isVisible: true
-    });
+        // 添加成功后更新前端表格数据
+        const newId = tableData.value.length ? tableData.value[tableData.value.length - 1].id + 1 : 1;
+        tableData.value.push({ ...newArticle.value, id: newId });
+        dialogVisible.value = false;
+
+        // 重置表单
+        Object.assign(newArticle.value, {
+            id: 0,
+            title: '',
+            description: '',
+            storagePath: '',
+            tags: '',
+            category: '',
+            createTime: '',
+            updateTime: '',
+            isVisible: true,
+        });
+
+        Notification.success('文章添加成功！');
+    } catch (error) {
+        console.error('添加文章失败:', error);
+        Notification.error('添加文章失败，请稍后重试！');
+    }
 };
+
 
 // 编辑文章
 const handleEdit = (index, row) => {
