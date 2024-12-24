@@ -3,10 +3,7 @@
         <div class="article-card">
             <!-- 文章内容区域 -->
             <div class="article-content">
-                <h1>文章详情</h1>
-                <p>文章名称: {{ articleName }}</p>
-
-                <!-- 渲染 Markdown 解析后的 HTML 内容 -->
+                <!-- 渲染 HTML 内容 -->
                 <div v-html="articleContent"></div>
             </div>
 
@@ -35,162 +32,117 @@
     </div>
 </template>
 
-<script lang="ts" setup>
-import { ref, computed, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import { marked } from 'marked'; // 引入 marked 库用于解析 Markdown
+<script setup>
+import { da } from 'element-plus/es/locales.mjs';
+import { ref, } from 'vue';
 
-import { useArticleStore } from '../../stores/articleStore';
-const articleStore = useArticleStore();
+// const route = useRoute();
+// const articleName = computed(() => route.params.name);
 
+const articleContent = ref('');
+const headings = ref([]);
 
-
-// 模拟 Markdown 数据
-const markdownText = `
-  # 下载安装启动RabbitMQ
-  ## 下载RabbitMQ
-  ### 安装Erlang
-  ### 安装Socat
-
-  ### 安装RabbitMQ
-  ## 启动RabbitMQ服务
-  # RabbitMQWeb管理界面及授权操作
-`;
-
-
-const api = '/deslre/article/getId';
-
-const getArticleData = async (id: number | null) => {
-    const formData = new FormData();
-    if (id !== null) {
-        formData.append('id', id.toString());
-    }
-
-    const { data: result, error } = await useFetch(api, {
-        baseURL: 'http://localhost:8080',
-        method: 'post',
-        // headers: {
-        //     "Content-Type": "multipart/form-data",
-        // },
-        body: formData, // 使用 FormData
-    });
-
-    console.log('result ======> ', result.value);
-    console.log('error ======> ', error);
+const api = {
+    getArticleData: '/deslre/article/getId',
+    getArticle: '/deslre/article/getArticle',
 };
 
-
-getArticleData(1);
-// getArticleData(articleStore.getSelectedArticleId);
-
-// 获取动态路由中的 article 名称
-const route = useRoute();
-const articleName = computed(() => route.params.name as string);
-
-// 存储解析后的 HTML 内容
-const articleContent = ref<string>('');
-
-// 存储文章的标题（用于生成目录）
-const headings = ref<{ id: string; text: string; children?: any[] }[]>([]);
-
-// 加载并解析 Markdown 文件
-const loadArticle = async () => {
+// 从后端获取文章数据
+const getArticleData = async (id) => {
     try {
-        // 设置 marked 解析选项
-        const renderer = new marked.Renderer();
-        let headingCount: { [key: string]: number } = {};  // 用于跟踪每个标题的计数
+        const formData = new FormData();
+        formData.append('id', id);
 
-        // 自定义 heading 渲染方法
-        renderer.heading = ({ tokens, depth }) => {
-            const token = tokens[0];
+        const { data: result, error } = await useFetch(api.getArticleData, {
+            baseURL: 'http://localhost:8080',
+            method: 'post',
+            body: formData,
+        });
 
-            if (token.type === 'text') {
-                let titleText = token.text;
+        console.log('result ======> ', result.value);
 
-                if (typeof titleText !== 'string') {
-                    titleText = String(titleText);
-                }
 
-                let id = titleText.toLowerCase().replace(/\s+/g, '-');
+        if (result.value.code !== 200) {
+            console.error('获取文章失败', error);
+            articleContent.value = '<p>文章加载失败，请稍后再试。</p>';
+            return;
+        }
 
-                if (headingCount[id]) {
-                    headingCount[id]++;
-                    id = `${id}-${headingCount[id]}`;
-                } else {
-                    headingCount[id] = 1;
-                }
+        // 后端直接返回解析后的 HTML
+        articleContent.value = result.value.message;
 
-                // 返回带有 id 的标题 HTML
-                return `<h${depth} id="${id}">${titleText}</h${depth}>`;
-            }
-
-            return `<h${depth}>${tokens.map((token: any) => token.text).join('')}</h${depth}>`;
-        };
-
-        // 解析 Markdown 内容
-        const htmlContent = await marked(markdownText, { renderer });
-        articleContent.value = htmlContent;
-
-        // 提取标题并生成层级目录
+        // 提取标题生成目录
         const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = htmlContent;
+        tempDiv.innerHTML = articleContent.value;
 
-        const headingsArray: any[] = [];
-        let currentLevel: any[] = [];
-        let prevDepth = 1;
-
+        const headingsArray = [];
+        let currentLevel = [];
         tempDiv.querySelectorAll('h1, h2, h3').forEach((heading) => {
             const id = heading.getAttribute('id');
             const text = heading.textContent || '';
             const depth = parseInt(heading.tagName[1]);
 
             const headingObj = { id, text, children: [] };
-
             if (depth === 1) {
-                // 一级标题
                 headingsArray.push(headingObj);
                 currentLevel = headingsArray;
             } else if (depth === 2) {
-                // 二级标题
                 currentLevel = headingsArray[headingsArray.length - 1].children || [];
                 currentLevel.push(headingObj);
             } else if (depth === 3) {
-                // 三级标题
                 currentLevel = currentLevel[currentLevel.length - 1].children || [];
                 currentLevel.push(headingObj);
             }
         });
 
         headings.value = headingsArray;
-
-    } catch (error) {
-        console.error('加载文章失败:', error);
+    } catch (err) {
+        console.error('加载文章失败', err);
         articleContent.value = '<p>文章加载失败，请稍后再试。</p>';
     }
 };
 
-// 页面加载后调用 loadArticle
-onMounted(() => {
-    loadArticle();
-});
+const title = ref('')
+
+const getArticle = async (id) => {
+
+    const formData = new FormData();
+    formData.append('id', id);
+
+    const { data: result, error } = await useFetch(api.getArticle, {
+        baseURL: 'http://localhost:8080',
+        method: 'post',
+        body: formData,
+    });
+
+    if (result.value.code !== 200) {
+        console.log('getArticle  error======> ', error);
+
+        return
+    }
+    let data = result.value.data
+    title.value = data.title
+    console.log('title ======> ', title.value);
+
+}
+
+getArticleData(1);
+getArticle(1)
 
 // 滚动到指定的标题
-const scrollToHeading = (id: string) => {
+const scrollToHeading = (id) => {
     const element = document.getElementById(id);
     if (element) {
-        const navbarHeight = document.querySelector('nav')?.clientHeight || 0;  // 获取导航栏高度
-        const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.screenX - navbarHeight;
-
+        const offsetPosition = element.offsetTop - (document.querySelector('nav')?.clientHeight || 0);
         window.scrollTo({
             top: offsetPosition,
-            behavior: 'smooth', // 平滑滚动
+            behavior: 'smooth',
         });
     }
 };
 </script>
 
-<style lang="css" scoped>
+<style scoped>
 .article-container {
     display: flex;
     justify-content: center;
