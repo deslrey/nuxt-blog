@@ -21,7 +21,7 @@ const Notification = {
         showNotification("成功!", msg, callback, "error");
     },
     success: (msg, callback) => {
-        showNotification("失败!", msg, callback, "success");
+        showNotification("成功!", msg, callback, "success");
     },
     warning: (msg, callback) => {
         showNotification("警告!", msg, callback, "warning");
