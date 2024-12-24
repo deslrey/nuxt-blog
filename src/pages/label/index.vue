@@ -97,6 +97,11 @@ const randomColor = () => {
     return color;
 };
 
+// 关闭弹窗
+const closeModal = () => {
+    showModal.value = false;
+};
+
 onMounted(() => {
     addData();
 });
@@ -133,15 +138,26 @@ onMounted(() => {
 /* 单个标签样式 */
 .tag-item {
     text-decoration: none;
+    /* 移除下划线 */
+    color: black;
+    /* 设置默认颜色为黑色 */
     padding: 5px 10px;
     border-radius: 5px;
-    transition: transform 0.2s ease, color 0.2s ease;
+    transition: transform 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    display: inline-block;
+    /* 确保浮动效果在块状元素上有效 */
 }
 
 .tag-item:hover {
-    transform: scale(1.1);
+    transform: translateY(-5px);
+    /* 实现浮动效果 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* 添加悬停时的阴影 */
     color: #0056b3;
+    /* 悬停时改变文字颜色 */
 }
+
+
 
 /* 弹窗覆盖层 */
 .modal-overlay {
@@ -169,18 +185,45 @@ onMounted(() => {
 /* 文章列表 */
 .article-list {
     list-style: none;
+    /* 移除默认列表样式 */
     padding: 0;
     margin: 20px 0;
 }
 
+/* 文章列表项 */
 .article-item {
+    list-style: none;
+    /* 去除默认样式 */
     margin-bottom: 10px;
+    /* 下方间距 */
     cursor: pointer;
-    color: #0056b3;
-    text-decoration: underline;
+    /* 鼠标悬停时显示指针 */
+    color: black;
+    /* 默认文字颜色 */
+    text-decoration: none;
+    /* 去除下划线 */
+    padding: 10px 15px;
+    /* 内边距 */
+    background-color: #f9f9f9;
+    /* 默认背景颜色 */
+    border-radius: 5px;
+    /* 圆角 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* 轻微阴影 */
+    transition: transform 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    display: block;
+    /* 一行显示一个 */
 }
 
+/* 鼠标悬停效果 */
 .article-item:hover {
-    color: #003580;
+    transform: translateY(-3px);
+    /* 悬浮上移 */
+    background-color: #f0f8ff;
+    /* 悬停时背景颜色变淡蓝 */
+    color: #0056b3;
+    /* 悬停时文字颜色 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    /* 加强阴影 */
 }
 </style>
