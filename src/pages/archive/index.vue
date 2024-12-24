@@ -2,19 +2,19 @@
     <div id="board">
         <div class="container">
             <div class="row">
-                <div class="col-12 col-md-8 m-auto"> <!-- 控制宽度并居中 -->
+                <div class="col-12 col-md-8 m-auto">
+                    <!-- 控制宽度并居中 -->
                     <div class="list-group">
                         <!-- 显示文章总数 -->
                         <p class="h4">共计 {{ totalArticles }} 篇文章</p>
-                        <hr>
+                        <hr />
 
                         <!-- 按年份分组渲染文章 -->
                         <div v-for="(yearArticles, year) in groupedArticles" :key="year">
                             <p class="h5">{{ year }}</p>
-
-                            <a v-for="article in yearArticles" :key="article.date" :href="`/article/${article.title}`"
+                            <a v-for="article in yearArticles" :key="article.id" :href="`/article/${article.title}`"
                                 class="list-group-item list-group-item-action">
-                                <time>{{ article.date.slice(5) }}</time>
+                                {{ article.updateTime.slice(5) }} <!-- 只显示 MM-DD -->
                                 <div class="list-group-item-title">{{ article.title }}</div>
                             </a>
                         </div>
@@ -25,43 +25,78 @@
     </div>
 </template>
 
-<script lang="ts" setup>
-import { ref, computed } from 'vue'
+
+<script setup>
+import { ref, computed, onMounted } from 'vue'
 
 // 文章数据
-const articles = ref([
-    { date: '2024-08-09', title: 'CentOS7离线安装Python3环境' },
-    { date: '2024-07-11', title: 'CentOS安装RabbitMQ' },
-    { date: '2024-02-26', title: 'Neo4j基础命令' },
-    { date: '2024-02-08', title: 'Redis实现自增ID' },
-    { date: '2024-02-07', title: 'Linux配置Neo4j' },
-    { date: '2024-02-03', title: '黑马点评' },
-    { date: '2024-01-29', title: '测试' }
-])
+const articles = ref([])
+
+// API 请求地址
+const api = "/deslre/article/getArticles"
+
+// 格式化日期
+const formatDate = (date) => {
+    const d = new Date(date)
+    const year = d.getFullYear()
+    const month = d.getMonth() + 1
+    const day = d.getDate()
+    return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`
+}
+
+// 获取数据并处理
+const addData = async () => {
+    const { data: result } = await $fetch(api, {
+        baseURL: 'http://localhost:8080',
+    })
+
+
+    articles.value = result.map((article) => ({
+        ...article,
+        updateTime: formatDate(article.updateTime), // 格式化日期
+    }))
+}
 
 // 按日期排序（从新到旧）
 const sortedArticles = computed(() => {
-    return articles.value.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    return articles.value.sort(
+        (a, b) => new Date(b.updateTime) - new Date(a.updateTime)
+    )
 })
 
-// 按年份分组文章
+// 按年份分组并排序文章
 const groupedArticles = computed(() => {
-    const groups: Record<string, { date: string, title: string, year: string }[]> = {}
+    const groups = {}
+    // 将文章按年份分组
     sortedArticles.value.forEach((article) => {
-        const year = article.date.split('-')[0]
+        const year = article.updateTime.split('-')[0] // 提取年份
         if (!groups[year]) {
             groups[year] = []
         }
-        groups[year].push({ ...article, year })
+        groups[year].push(article) // 添加到对应年份分组
     })
-    return groups
+    // 对年份分组排序，从新到旧
+    const sortedGroups = {}
+    Object.keys(groups)
+        .sort((a, b) => b - a) // 按年份从新到旧
+        .forEach((year) => {
+            sortedGroups[year] = groups[year]
+        })
+    return sortedGroups
 })
 
 // 统计文章总数
 const totalArticles = computed(() => sortedArticles.value.length)
+
+// 获取文章数据
+onMounted(() => {
+    addData()
+})
+
 </script>
 
-<style lang="css" scoped>
+
+<style scoped>
 /* 背景和居中样式 */
 .container {
     background: #f8f9fa;
@@ -74,7 +109,7 @@ const totalArticles = computed(() => sortedArticles.value.length)
     /* 阴影效果 */
     width: 50%;
     margin-left: 25%;
-    margin-top: 10%;
+    margin-top: 5%;
 }
 
 .list-group-item {
