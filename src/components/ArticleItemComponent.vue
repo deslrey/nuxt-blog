@@ -64,17 +64,9 @@ const addData = async () => {
 
     if (result.value.code == 200) {
         articles.value = result.value.data;
-    }
-
-    if (result.value) {
-        articles.value = result.value.data;
-    }
-
-    if (error) {
+    } else {
         Notification.error("获取文章错误,请稍后重试")
-        return;
     }
-
 };
 
 addData(); // 调用函数
