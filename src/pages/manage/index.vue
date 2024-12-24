@@ -1,6 +1,5 @@
 <template>
     <div>
-        <h1>我是文章管理界面</h1>
         <div style="display: flex; justify-content: flex-end; margin-bottom: 20px; margin-right: 10%;">
             <el-button type="primary" @click="dialogVisible = true">添加文章</el-button>
             <el-button type="danger" @click="quitLogin">退出</el-button>
@@ -22,10 +21,12 @@
                 <template #default="scope">
                     <el-button size="default" @click="handleEdit(scope.$index, scope.row)"
                         style="margin-right: 10px;">编辑</el-button>
-                    <el-switch v-model="scope.row.isVisible"
-                        @change="handleVisibilityChange(scope.$index, scope.row)" />
+                    <!-- 开关绑定 isVisible 并监听变化 -->
+                    <el-switch v-model="scope.row.isVisible" @change="handleVisibilityChange(scope.row)" />
+
                 </template>
             </el-table-column>
+
         </el-table>
         <div class="pagination-container">
             <el-pagination background layout="prev, pager, next, sizes, jumper" :total="tableData.length"
@@ -58,27 +59,18 @@
     </div>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import { Notification } from '#build/imports';
-import { computed, ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
-interface Article {
-    id: number;
-    title: string;
-    description: string;
-    storagePath: string;
-    tags: string;
-    category: string;
-    createdDate: string;
-    isVisible: boolean;
-}
 const router = useRouter();
 const search = ref('');
 const currentPage = ref(1);
 const pageSize = ref(5);
 const dialogVisible = ref(false);
-const newArticle = ref<Article>({
+
+const newArticle = ref({
     id: 0,
     title: '',
     description: '',
@@ -86,31 +78,12 @@ const newArticle = ref<Article>({
     tags: '',
     category: '',
     createdDate: '',
-    isVisible: true,
+    isVisible: true
 });
-const tableData = ref([
-    {
-        id: 1,
-        title: '如何使用 Nuxt 构建博客',
-        description: '这是一篇关于使用 Nuxt.js 构建个人博客的文章。',
-        storagePath: '/articles/nuxt-blog',
-        tags: 'Nuxt,博客,前端',
-        category: '前端开发',
-        createdDate: '2024-12-01',
-        isVisible: true,
-    },
-    {
-        id: 2,
-        title: '学习 Element Plus 的基础',
-        description: '介绍 Element Plus 的核心组件和使用方法。',
-        storagePath: '/articles/element-plus',
-        tags: 'Element Plus,UI,前端',
-        category: '前端开发',
-        createdDate: '2024-12-15',
-        isVisible: false,
-    },
-]);
 
+const tableData = ref([]); // 初始化为空数组
+
+// 筛选表格数据
 const filterTableData = computed(() =>
     tableData.value.filter(
         (data) =>
@@ -120,18 +93,29 @@ const filterTableData = computed(() =>
     )
 );
 
-const handleEdit = (index: number, row: Article) => {
-    console.log('Edit:', index, row);
+const fetchArticles = async () => {
+    try {
+        const { data: result } = await $fetch('/deslre/article/getList', {
+            baseURL: 'http://localhost:8080',
+        });
+        // 转换 exist 为布尔值
+        tableData.value = result.map((item) => ({
+            ...item,
+            isVisible: item.exist === 1,
+        }));
+    } catch (error) {
+        alert('获取文章数据失败，请稍后重试！');
+    }
 };
 
-const handleVisibilityChange = (index: number, row: Article) => {
-    console.log('Visibility Changed:', index, row);
-};
 
+// 添加文章
 const addArticle = () => {
     const newId = tableData.value.length ? tableData.value[tableData.value.length - 1].id + 1 : 1;
     tableData.value.push({ ...newArticle.value, id: newId });
     dialogVisible.value = false;
+
+    // 重置表单
     Object.assign(newArticle.value, {
         id: 0,
         title: '',
@@ -140,25 +124,49 @@ const addArticle = () => {
         tags: '',
         category: '',
         createdDate: '',
-        isVisible: true,
+        isVisible: true
     });
 };
 
-const quitLogin = () => {
-    Notification.success('退出登录成功!')
-    router.push('/');
-}
+// 编辑文章
+const handleEdit = (index, row) => {
+    console.log('Edit:', index, row);
+};
 
+const handleVisibilityChange = async (row) => {
+    try {
+        const formData = new FormData();
+        formData.append('id', row.id);
+        formData.append('exist', row.isVisible);
+        // 调用后端接口更新状态
+        await $fetch('/deslre/article/updateExist', {
+            method: 'POST',
+            baseURL: 'http://localhost:8080',
+            body: formData,
+        });
+        // 请求成功后的操作
+        Notification.success(`文章ID ${row.id} 的显示状态已更新为：${row.isVisible ? "开启" : "关闭"}`)
+    } catch (error) {
+        // 如果失败，则恢复原状态
+        Notification.error(`更新失败，恢复原状态: ${error}`)
+        row.isVisible = !row.isVisible;
+    }
+};
+
+
+// 退出登录
+const quitLogin = () => {
+    alert('退出登录成功！');
+    router.push('/');
+};
+
+// 初始化加载数据
+onMounted(() => {
+    fetchArticles();
+});
 </script>
 
 <style scoped>
-h1 {
-    margin-bottom: 20px;
-    font-size: 24px;
-    text-align: center;
-    color: #333;
-}
-
 .el-table {
     border: 1px solid #dcdcdc;
     border-radius: 8px;
@@ -175,10 +183,6 @@ h1 {
 .el-table td {
     color: #555;
     padding: 12px 8px;
-}
-
-.el-input {
-    margin-bottom: 10px;
 }
 
 .pagination-container {
